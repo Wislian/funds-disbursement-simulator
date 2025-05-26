@@ -76,3 +76,27 @@ def transactions():
             }
         }), 500
 
+
+@transaction_bp.route("/create-transaction", methods=["POST"])
+def create_transaction():
+    data = request.get_json()
+    
+    required_fields = ["date","client_id","amount","payment_method_id"]
+    if not all(field in data for field in required_fields):
+        return jsonify({
+            "erro":"Missing fields in request"
+        }), 400
+    success = Transaction.create_transaction(
+        date = data["date"],
+        client_id = data["client_id"],
+        amount = data["amount"],
+        payment_method_id = data["payment_method_id"]
+    )
+    if success:
+        return jsonify({
+            "message":"Transaction Created"
+        }), 201
+    else:
+        return jsonify({
+            "error":"Transaction creation failed"
+        }), 500

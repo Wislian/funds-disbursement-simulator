@@ -70,3 +70,16 @@ class Transaction:
         except psycopg2.Error as e:
             print(f"Postgres error in get_all_transactions: {e}")
             return None, "DATABASE_ERROR"
+    
+    @staticmethod
+    def create_transaction(date, client_id, amount, payment_method_id):
+        query= """
+                INSERT INTO transactions(date, client_id,amount, payment_method_id)
+                VALUES (%s, %s, %s, %s)
+                """
+        try:
+            db.execute(query,(date, client_id, amount, payment_method_id))
+            return True
+        except Exception as e:
+            print("Error inserting transaction:", e)
+            return False
